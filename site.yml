@@ -1,0 +1,32 @@
+---
+# TODO: one playbook for all four servers. Modules only (no shell, raw or script). A second run must change nothing.
+# `command` is allowed ONLY with changed_when: false (a read-only question).
+#
+# Play 1 "Sort the fleet by operating system" (hosts: fleet, gather_facts: true, become: false)
+#   - group_by on the distribution fact: key  os_{{ ansible_distribution }}  ->  groups os_Ubuntu and os_Debian appear while the playbook runs
+#     (group_by reports "changed" every time it runs, which would break idempotence: it only builds a group in memory, so say so with changed_when)
+#
+# Play 2 "Everything every server needs" (hosts: fleet, become: true)
+#   tag `packages`:
+#     - htop, jq and curl installed (ONE task with a list or a loop; update_cache with cache_valid_time)
+#   tag `identity`:
+#     - /etc/fleet-release says exactly  "<ansible_distribution> <ansible_distribution_version> - managed by Ansible"  plus a newline (copy with content:)
+#       (look at the value of ansible_distribution_version on each server: Ubuntu says 24.04, Debian says a point release such as 12.15)
+#     - the users in `fleet_users` (see group_vars/all.yml, you write it) exist: a loop; users that have `sudo: true` are in the group `sudo`
+#       (apt installs the sudo package already, so the group exists on both distributions)
+#   tag `report`:
+#     - ask the server how long it has been up (command: uptime -p, register the result, changed_when: false) and print it with debug.
+#       A question must never be reported as "changed".
+#
+# Play 3 "What differs" (hosts: os_Ubuntu, become: true)  tag `os-specific`
+#   - the firewall tool of Ubuntu: package ufw
+#   - a block: try to install the Ubuntu-only package update-notifier-common
+#       rescue (never needed on Ubuntu, but write it): record a line in /var/log/ansible-fallback.log
+#
+# Play 4 "What differs" (hosts: os_Debian, become: true)  tag `os-specific`
+#   - the firewall tool of Debian: package nftables
+#   - a block: try to install update-notifier-common (it does NOT exist in Debian 12: the install fails)
+#       rescue: write the line  "update-notifier-common is not available on {{ inventory_hostname }}"  to /var/log/ansible-fallback.log
+#               (create the file if needed; the playbook must still end with failed=0 and, on a second run, changed=0)
+#
+# Hint for idempotence of the rescue: the lineinfile module adds a line only if it is not there.

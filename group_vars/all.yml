@@ -1,0 +1,6 @@
+# TODO: the variable `fleet_users`: a list of dictionaries with `name` and `sudo` (true/false).
+#   ana    sudo: true
+#   bruno  sudo: false
+#   chloe  sudo: true
+# Variables in group_vars/all.yml apply to every host. (A second file, group_vars/os_Debian.yml, would apply only to the dynamic
+# group created by group_by; you do not need it here, but try it in the level-up.)
