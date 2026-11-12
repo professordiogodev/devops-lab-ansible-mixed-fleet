@@ -22,11 +22,21 @@
 
 ## 🎬 The situation
 
-<p align="center"><img src="assets/gifs/situation.gif" width="300" alt="Animation: ansible-playbook site.yml --limit &quot;mf-d*&quot;"></p>
+<p align="center"><img src="assets/gifs/situation.gif" width="300" alt="Four servers converging to the same state with one playbook"></p>
 
-Pollie's company has just bought a small startup. With the startup came two servers running **Debian 12**, and your own two servers run **Ubuntu 24.04**. Management wants all four to follow the same rules this week: the same tools, the same people with the same rights, a file that says what each server is. And they want it done by a playbook, not by hand, because next month there will be six.
+```text
+From   : Management
+To     : Platform
+Subject: Two new servers (from the acquisition)
 
-The two operating systems are 95% the same, which is exactly why they are dangerous. A package that exists on one and not on the other, a tool that has a different name, a version string that looks different: each is a place where a playbook written for one OS fails on the other. You will write one playbook that **asks each server what it is** and acts accordingly, that **survives the differences** instead of crashing on them, and that changes nothing when nothing needs to change.
+Our company has bought a small startup. Two servers came with it, running
+Debian 12. Ours run Ubuntu 24.04. This week all four must follow the same
+rules: the same tools, the same people with the same rights, and a file on
+each saying what that server is. Next month there will be six, so please
+do it with a playbook, not by hand.
+```
+
+The two systems are 95% the same, which is exactly what makes them dangerous. A package that exists on one and not on the other, a tool with a different name, a version string that looks different: each is a place where a playbook written for one OS fails on the other. You will write one playbook that **asks each server what it is**, acts accordingly, **survives the differences** instead of crashing on them, and changes nothing when nothing needs to change.
 
 > [!IMPORTANT]
 > **Your mission**
